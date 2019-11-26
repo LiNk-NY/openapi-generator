@@ -134,6 +134,11 @@
   infoLink: "https://www.gantner.com/"
   pinned: false
 -
+  caption: "GetYourGuide"
+  image: "img/companies/getyourguide.png"
+  infoLink: "https://www.getyourguide.com/"
+  pinned: false
+-
   caption: "GMO Pepabo"
   image: "img/companies/pepabo.png"
   infoLink: "https://pepabo.com/en/"
@@ -165,7 +170,7 @@
   pinned: false
 -
   caption: "Kronsoft Development"
-  image: "img/companies/kronsoft.svg"
+  image: "img/companies/kronsoft.png"
   infoLink: "https://www.kronsoft.ro/home/"
   pinned: false
 -
@@ -302,6 +307,11 @@
   caption: Xero
   image: "img/companies/xero.png"
   infoLink: "https://www.xero.com/"
+  pinned: false
+-
+  caption: Yahoo! Japan
+  image: "img/companies/yahoo_japan.png"
+  infoLink: "https://www.yahoo.co.jp"
   pinned: false
 -
   caption: Yelp 
