@@ -289,7 +289,7 @@ public class RClientCodegen extends DefaultCodegen implements CodegenConfig {
 
     @Override
     public String toModelFilename(String name) {
-        return underscore(toModelName(name));
+        return toModelName(name);
     }
 
     @Override
@@ -316,7 +316,7 @@ public class RClientCodegen extends DefaultCodegen implements CodegenConfig {
             name = "model_" + name; // e.g. 200Response => Model200Response (after camelize)
         }
 
-        return camelize(name);
+        return name;
     }
 
     @Override
@@ -350,7 +350,29 @@ public class RClientCodegen extends DefaultCodegen implements CodegenConfig {
 
     @Override
     public String toApiName(String name) {
-        return camelize(super.toApiName(name));
+        if (!StringUtils.isEmpty(apiNamePrefix)) {
+            name = apiNamePrefix + "_" + name;
+        }
+
+        if (!StringUtils.isEmpty(apiNameSuffix)) {
+            name = name + "_" + apiNameSuffix;
+        }
+
+        name = sanitizeName(name);
+
+        // model name cannot use reserved keyword, e.g. return
+        if (isReservedWord(name)) {
+            LOGGER.warn(name + " (reserved word) cannot be used as api name. Renamed to " + camelize("api_" + name));
+            name = "api_" + name;
+        }
+
+        // model name starts with number
+        if (name.matches("^\\d.*")) {
+            LOGGER.warn(name + " (api name starts with number) cannot be used as api name. Renamed to " + camelize("api_" + name));
+            name = "api_" + name;
+        }
+
+        return name;
     }
 
     @Override
@@ -531,7 +553,7 @@ public class RClientCodegen extends DefaultCodegen implements CodegenConfig {
 
     @Override
     public String toEnumName(CodegenProperty property) {
-        String enumName = underscore(toModelName(property.name)).toUpperCase(Locale.ROOT);
+        String enumName = toModelName(property.name).toUpperCase(Locale.ROOT);
 
         // remove [] for array or map of enum
         enumName = enumName.replace("[]", "");
