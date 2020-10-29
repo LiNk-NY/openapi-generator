@@ -43,6 +43,7 @@ public class PythonClientCodegen extends DefaultCodegen implements CodegenConfig
     public static final String DEFAULT_LIBRARY = "urllib3";
     // nose is a python testing framework, we use pytest if USE_NOSE is unset
     public static final String USE_NOSE = "useNose";
+    public static final String RECURSION_LIMIT = "recursionLimit";
 
     protected String packageName = "openapi_client";
     protected String packageVersion = "1.0.0";
@@ -128,6 +129,7 @@ public class PythonClientCodegen extends DefaultCodegen implements CodegenConfig
         typeMapping.put("long", "int");
         typeMapping.put("double", "float");
         typeMapping.put("array", "list");
+        typeMapping.put("set", "list");
         typeMapping.put("map", "dict");
         typeMapping.put("boolean", "bool");
         typeMapping.put("string", "str");
@@ -143,6 +145,7 @@ public class PythonClientCodegen extends DefaultCodegen implements CodegenConfig
         // map uuid to string for the time being
         typeMapping.put("UUID", "str");
         typeMapping.put("URI", "str");
+        typeMapping.put("null", "none_type");
 
         // from https://docs.python.org/3/reference/lexical_analysis.html#keywords
         setReservedWordsLowerCase(
@@ -182,6 +185,7 @@ public class PythonClientCodegen extends DefaultCodegen implements CodegenConfig
                 .defaultValue(Boolean.FALSE.toString()));
         cliOptions.add(CliOption.newBoolean(USE_NOSE, "use the nose test framework").
                 defaultValue(Boolean.FALSE.toString()));
+        cliOptions.add(new CliOption(RECURSION_LIMIT, "Set the recursion limit. If not set, use the system default value."));
 
         supportedLibraries.put("urllib3", "urllib3-based client");
         supportedLibraries.put("asyncio", "Asyncio-based client (python 3.5+)");
@@ -249,6 +253,15 @@ public class PythonClientCodegen extends DefaultCodegen implements CodegenConfig
 
         if (additionalProperties.containsKey(USE_NOSE)) {
             setUseNose((String) additionalProperties.get(USE_NOSE));
+        }
+
+        // check to see if setRecursionLimit is set and whether it's an integer
+        if (additionalProperties.containsKey(RECURSION_LIMIT)) {
+            try {
+                Integer.parseInt((String)additionalProperties.get(RECURSION_LIMIT));
+            } catch(NumberFormatException | NullPointerException e) {
+                throw new IllegalArgumentException("recursionLimit must be an integer, e.g. 2000.");
+            }
         }
 
         String readmePath = "README.md";
@@ -459,7 +472,7 @@ public class PythonClientCodegen extends DefaultCodegen implements CodegenConfig
             Schema inner = ap.getItems();
             return getSchemaType(p) + "[" + getTypeDeclaration(inner) + "]";
         } else if (ModelUtils.isMapSchema(p)) {
-            Schema inner = ModelUtils.getAdditionalProperties(p);
+            Schema inner = getAdditionalProperties(p);
 
             return getSchemaType(p) + "(str, " + getTypeDeclaration(inner) + ")";
         }
@@ -720,7 +733,7 @@ public class PythonClientCodegen extends DefaultCodegen implements CodegenConfig
         }
 
         // correct "&#39;"s into "'"s after toString()
-        if (ModelUtils.isStringSchema(schema) && schema.getDefault() != null) {
+        if (ModelUtils.isStringSchema(schema) && schema.getDefault() != null && !ModelUtils.isDateSchema(schema) && !ModelUtils.isDateTimeSchema(schema)) {
             example = (String) schema.getDefault();
         }
 
@@ -941,9 +954,9 @@ public class PythonClientCodegen extends DefaultCodegen implements CodegenConfig
 
         if (example == null) {
             example = "None";
-        } else if (Boolean.TRUE.equals(p.isListContainer)) {
+        } else if (Boolean.TRUE.equals(p.isArray)) {
             example = "[" + example + "]";
-        } else if (Boolean.TRUE.equals(p.isMapContainer)) {
+        } else if (Boolean.TRUE.equals(p.isMap)) {
             example = "{'key': " + example + "}";
         }
 

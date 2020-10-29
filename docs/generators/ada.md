@@ -3,9 +3,12 @@ title: Config Options for ada
 sidebar_label: ada
 ---
 
+These options may be applied as additional-properties (cli) or configOptions (plugins). Refer to [configuration docs](https://openapi-generator.tech/docs/configuration) for more details.
+
 | Option | Description | Values | Default |
 | ------ | ----------- | ------ | ------- |
 |allowUnicodeIdentifiers|boolean, toggles whether unicode identifiers are allowed in names or not, default is false| |false|
+|disallowAdditionalPropertiesIfNotPresent|Specify the behavior when the 'additionalProperties' keyword is not present in the OAS document. If false: the 'additionalProperties' implementation is compliant with the OAS and JSON schema specifications. If true: when the 'additionalProperties' keyword is not present in a schema, the value of 'additionalProperties' is set to false, i.e. no additional properties are allowed. Note: this mode is not compliant with the JSON schema specification. This is the original openapi-generator behavior.This setting is currently ignored for OAS 2.0 documents:  1) When the 'additionalProperties' keyword is not present in a 2.0 schema, additional properties are NOT allowed.  2) Boolean values of the 'additionalProperties' keyword are ignored. It's as if additional properties are NOT allowed.Note: the root cause are issues #1369 and #1371, which must be resolved in the swagger-parser project.|<dl><dt>**false**</dt><dd>The 'additionalProperties' implementation is compliant with the OAS and JSON schema specifications.</dd><dt>**true**</dt><dd>when the 'additionalProperties' keyword is not present in a schema, the value of 'additionalProperties' is automatically set to false, i.e. no additional properties are allowed. Note: this mode is not compliant with the JSON schema specification. This is the original openapi-generator behavior.</dd></dl>|true|
 |ensureUniqueParams|Whether to ensure parameter names are unique in an operation (rename parameters that are not).| |true|
 |legacyDiscriminatorBehavior|This flag is used by OpenAPITools codegen to influence the processing of the discriminator attribute in OpenAPI documents. This flag has no impact if the OAS document does not use the discriminator attribute. The default value of this flag is set in each language-specific code generator (e.g. Python, Java, go...)using the method toModelName. Note to developers supporting a language generator in OpenAPITools; to fully support the discriminator attribute as defined in the OAS specification 3.x, language generators should set this flag to true by default; however this requires updating the mustache templates to generate a language-specific discriminator lookup function that iterates over {{#mappedModels}} and does not iterate over {{children}}, {{#anyOf}}, or {{#oneOf}}.|<dl><dt>**true**</dt><dd>The mapping in the discriminator includes descendent schemas that allOf inherit from self and the discriminator mapping schemas in the OAS document.</dd><dt>**false**</dt><dd>The mapping in the discriminator includes any descendent schemas that allOf inherit from self, any oneOf schemas, any anyOf schemas, any x-discriminator-values, and the discriminator mapping schemas in the OAS document AND Codegen validates that oneOf and anyOf schemas contain the required discriminator and throws an error if the discriminator is missing.</dd></dl>|true|
 |prependFormOrBodyParameters|Add form or body parameters to the beginning of the parameter list.| |false|
@@ -28,14 +31,17 @@ sidebar_label: ada
 ## LANGUAGE PRIMITIVES
 
 <ul class="column-ul">
-<li>Boolean</li>
-<li>Character</li>
-<li>Integer</li>
+<li>DateTime</li>
+<li>binary</li>
 <li>boolean</li>
+<li>date</li>
 <li>double</li>
 <li>float</li>
 <li>integer</li>
 <li>long</li>
+<li>number</li>
+<li>object</li>
+<li>string</li>
 </ul>
 
 ## RESERVED WORDS
@@ -121,9 +127,10 @@ sidebar_label: ada
 ### Client Modification Feature
 | Name | Supported | Defined By |
 | ---- | --------- | ---------- |
-|BasePath|✗|ToolingExtension
+|BasePath|✓|ToolingExtension
 |Authorizations|✗|ToolingExtension
 |UserAgent|✗|ToolingExtension
+|MockServer|✗|ToolingExtension
 
 ### Data Type Feature
 | Name | Supported | Defined By |
@@ -161,7 +168,7 @@ sidebar_label: ada
 ### Documentation Feature
 | Name | Supported | Defined By |
 | ---- | --------- | ---------- |
-|Readme|✗|ToolingExtension
+|Readme|✓|ToolingExtension
 |Model|✓|ToolingExtension
 |Api|✓|ToolingExtension
 
@@ -181,7 +188,7 @@ sidebar_label: ada
 |MultiServer|✗|OAS3
 |ParameterizedServer|✗|OAS3
 |ParameterStyling|✗|OAS3
-|Callbacks|✓|OAS3
+|Callbacks|✗|OAS3
 |LinkObjects|✗|OAS3
 
 ### Parameter Feature
@@ -200,20 +207,20 @@ sidebar_label: ada
 | ---- | --------- | ---------- |
 |Simple|✓|OAS2,OAS3
 |Composite|✓|OAS2,OAS3
-|Polymorphism|✓|OAS2,OAS3
+|Polymorphism|✗|OAS2,OAS3
 |Union|✗|OAS3
 
 ### Security Feature
 | Name | Supported | Defined By |
 | ---- | --------- | ---------- |
-|BasicAuth|✓|OAS2,OAS3
-|ApiKey|✓|OAS2,OAS3
+|BasicAuth|✗|OAS2,OAS3
+|ApiKey|✗|OAS2,OAS3
 |OpenIDConnect|✗|OAS3
-|BearerToken|✓|OAS3
-|OAuth2_Implicit|✓|OAS2,OAS3
-|OAuth2_Password|✓|OAS2,OAS3
-|OAuth2_ClientCredentials|✓|OAS2,OAS3
-|OAuth2_AuthorizationCode|✓|OAS2,OAS3
+|BearerToken|✗|OAS3
+|OAuth2_Implicit|✗|OAS2,OAS3
+|OAuth2_Password|✗|OAS2,OAS3
+|OAuth2_ClientCredentials|✗|OAS2,OAS3
+|OAuth2_AuthorizationCode|✗|OAS2,OAS3
 
 ### Wire Format Feature
 | Name | Supported | Defined By |

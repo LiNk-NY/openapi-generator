@@ -8,11 +8,11 @@ Installing OpenAPI Generator's CLI tool allows users to generate all available g
 
 Some of the following are cross-platform options and some are not, these are called out where possible.
 
-## NPM
+## npm
 
 > **Platform(s)**: Linux, macOS, Windows
 
-The [NPM package wrapper](https://github.com/openapitools/openapi-generator-cli) is cross-platform wrapper around the .jar artifact. It works by providing a CLI wrapper atop the JAR's command line options. This gives a simple interface layer which normalizes usage of the command line across operating systems, removing some differences in how options or switches are passed to the tool (depending on OS).
+The [npm package wrapper](https://github.com/openapitools/openapi-generator-cli) is cross-platform wrapper around the .jar artifact. It works by providing a CLI wrapper atop the JAR's command line options. This gives a simple interface layer which normalizes usage of the command line across operating systems, removing some differences in how options or switches are passed to the tool (depending on OS).
 **Install** the latest version of the tool globally, exposing the CLI on the command line:
 
 ```bash
@@ -22,7 +22,7 @@ npm install @openapitools/openapi-generator-cli -g
 To install a specific version of the tool, pass the version during installation:
 <!-- RELEASE_VERSION -->
 ```bash
-npm install @openapitools/openapi-generator-cli@cli-4.3.1 -g
+openapi-generator-cli version-manager set 4.3.1
 ```
 <!-- /RELEASE_VERSION -->
 To install the tool as a dev dependency in your current project:
@@ -30,10 +30,10 @@ To install the tool as a dev dependency in your current project:
 ```bash
 npm install @openapitools/openapi-generator-cli -D
 ```
-Then, **generate** a ruby client from a valid [petstore.yaml](https://raw.githubusercontent.com/openapitools/openapi-generator/master/modules/openapi-generator/src/test/resources/2_0/petstore.yaml) doc:
+Then, **generate** a ruby client from a valid [petstore.yaml](https://raw.githubusercontent.com/openapitools/openapi-generator/master/modules/openapi-generator/src/test/resources/3_0/petstore.yaml) doc:
 
 ```bash
-npx openapi-generator generate -i petstore.yaml -g ruby -o /tmp/test/
+npx @openapitools/openapi-generator-cli generate -i petstore.yaml -g ruby -o /tmp/test/
 ```
 
 > `npx` will execute a globally available `openapi-generator`, and if not found it will fall back to project-local commands. The result is that the above command will work regardless of which installation method you've chosen.
@@ -48,7 +48,7 @@ npx openapi-generator generate -i petstore.yaml -g ruby -o /tmp/test/
 brew install openapi-generator
 ```
 
-Then, **generate** a ruby client from a valid [petstore.yaml](https://raw.githubusercontent.com/openapitools/openapi-generator/master/modules/openapi-generator/src/test/resources/2_0/petstore.yaml) doc:
+Then, **generate** a ruby client from a valid [petstore.yaml](https://raw.githubusercontent.com/openapitools/openapi-generator/master/modules/openapi-generator/src/test/resources/3_0/petstore.yaml) doc:
 
 ```bash
 openapi-generator generate -i petstore.yaml -g ruby -o /tmp/test/
@@ -60,7 +60,7 @@ openapi-generator generate -i petstore.yaml -g ruby -o /tmp/test/
 
 The OpenAPI Generator Docker image acts as a standalone executable. It can be used as an alternative to installing via homebrew, or for developers who are unable to install Java or upgrade the installed version.
 
-To generate code from a valid [petstore.yaml](https://raw.githubusercontent.com/openapitools/openapi-generator/master/modules/openapi-generator/src/test/resources/2_0/petstore.yaml) doc with this image, you'll need to mount a local location as a volume.
+To generate code from a valid [petstore.yaml](https://raw.githubusercontent.com/openapitools/openapi-generator/master/modules/openapi-generator/src/test/resources/3_0/petstore.yaml) doc with this image, you'll need to mount a local location as a volume.
 You'll then need to output the generated code to this mapped volume. Everything else works the same as if you ran the command on your host machine.
 
 Here's an example generating a Go client:

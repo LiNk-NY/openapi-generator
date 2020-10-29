@@ -45,12 +45,12 @@ impl std::str::FromStr for {{{classname}}} {
 {{/isEnum}}
 {{^isEnum}}
 {{#dataType}}
-{{#isMapModel}}
+{{#isMap}}
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
-{{/isMapModel}}
-{{^isMapModel}}
+{{/isMap}}
+{{^isMap}}
 #[derive(Debug, Clone, PartialEq, PartialOrd, serde::Serialize, serde::Deserialize)]
-{{/isMapModel}}
+{{/isMap}}
 #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
 {{#xmlName}}
 #[serde(rename = "{{{xmlName}}}")]
@@ -159,25 +159,25 @@ impl std::convert::TryFrom<hyper::header::HeaderValue> for header::IntoHeaderVal
     }
 }
 
-{{#arrayModelType}}{{#vendorExtensions}}{{#itemXmlName}}// Utility function for wrapping list elements when serializing xml
+{{#arrayModelType}}{{#vendorExtensions}}{{#x-item-xml-name}}// Utility function for wrapping list elements when serializing xml
 #[allow(non_snake_case)]
-fn wrap_in_{{{itemXmlName}}}<S>(item: &Vec<{{{arrayModelType}}}>, serializer: S) -> std::result::Result<S::Ok, S::Error>
+fn wrap_in_{{{x-item-xml-name}}}<S>(item: &Vec<{{{arrayModelType}}}>, serializer: S) -> std::result::Result<S::Ok, S::Error>
 where
     S: serde::ser::Serializer,
 {
-    serde_xml_rs::wrap_primitives(item, serializer, "{{{itemXmlName}}}")
+    serde_xml_rs::wrap_primitives(item, serializer, "{{{x-item-xml-name}}}")
 }
 
-{{/itemXmlName}}
+{{/x-item-xml-name}}
 {{/vendorExtensions}}
 {{! vec}}
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
 pub struct {{{classname}}}(
 {{#vendorExtensions}}
-{{#itemXmlName}}
-    #[serde(serialize_with = "wrap_in_{{{itemXmlName}}}")]
-{{/itemXmlName}}
+{{#x-item-xml-name}}
+    #[serde(serialize_with = "wrap_in_{{{x-item-xml-name}}}")]
+{{/x-item-xml-name}}
 {{/vendorExtensions}}
     Vec<{{{arrayModelType}}}>
 );
@@ -277,9 +277,9 @@ pub struct {{{classname}}} {
 {{/isEnum}}
     #[serde(rename = "{{{baseName}}}")]
 {{#vendorExtensions}}
-{{#itemXmlName}}
-    #[serde(serialize_with = "wrap_in_{{{itemXmlName}}}")]
-{{/itemXmlName}}
+{{#x-item-xml-name}}
+    #[serde(serialize_with = "wrap_in_{{{x-item-xml-name}}}")]
+{{/x-item-xml-name}}
 {{/vendorExtensions}}
 {{#required}}
     pub {{{name}}}: {{#isNullable}}swagger::Nullable<{{/isNullable}}{{{dataType}}}{{#isNullable}}>{{/isNullable}},
@@ -318,54 +318,54 @@ impl std::string::ToString for {{{classname}}} {
 {{#isBinary}}
         // Skipping {{baseName}} in query parameter serialization
 {{/isBinary}}
-{{#isMapContainer}}
+{{#isMap}}
         // Skipping {{baseName}} in query parameter serialization
-{{/isMapContainer}}
+{{/isMap}}
 {{^isPrimitiveType}}
         // Skipping {{baseName}} in query parameter serialization
 {{/isPrimitiveType}}
-{{^isByteArray}}{{^isBinary}}{{^isMapContainer}}{{#isPrimitiveType}}
+{{^isByteArray}}{{^isBinary}}{{^isMap}}{{#isPrimitiveType}}
 {{#required}}
         params.push("{{{baseName}}}".to_string());
-{{^isListContainer}}
+{{^isArray}}
 {{#isNullable}}
         params.push(self.{{{name}}}.as_ref().map_or("null".to_string(), |x| x.to_string()));
 {{/isNullable}}
 {{^isNullable}}
         params.push(self.{{{name}}}.to_string());
 {{/isNullable}}
-{{/isListContainer}}
-{{#isListContainer}}
+{{/isArray}}
+{{#isArray}}
 {{#isNullable}}
         params.push(self.{{{name}}}.as_ref().map_or(vec!["null".to_string()], |x| x.iter().map(|x| x.to_string()).collect::<Vec<_>>().join(",").to_string()));
 {{/isNullable}}
 {{^isNullable}}
         params.push(self.{{{name}}}.iter().map(|x| x.to_string()).collect::<Vec<_>>().join(",").to_string());
 {{/isNullable}}
-{{/isListContainer}}
+{{/isArray}}
 {{/required}}
 {{^required}}
         if let Some(ref {{{name}}}) = self.{{{name}}} {
             params.push("{{{baseName}}}".to_string());
-{{^isListContainer}}
+{{^isArray}}
 {{#isNullable}}
             params.push({{{name}}}.as_ref().map_or("null".to_string(), |x| x.to_string()));
 {{/isNullable}}
 {{^isNullable}}
             params.push({{{name}}}.to_string());
 {{/isNullable}}
-{{/isListContainer}}
-{{#isListContainer}}
+{{/isArray}}
+{{#isArray}}
 {{#isNullable}}
             params.push({{{name}}}.as_ref().map_or("null".to_string(), |x| x.iter().map(|x| x.to_string()).collect::<Vec<_>>().join(",").to_string()));
 {{/isNullable}}
 {{^isNullable}}
             params.push({{{name}}}.iter().map(|x| x.to_string()).collect::<Vec<_>>().join(",").to_string());
 {{/isNullable}}
-{{/isListContainer}}
+{{/isArray}}
         }
 {{/required}}
-{{/isPrimitiveType}}{{/isMapContainer}}{{/isBinary}}{{/isByteArray}}
+{{/isPrimitiveType}}{{/isMap}}{{/isBinary}}{{/isByteArray}}
 {{/vars}}
         params.join(",").to_string()
     }
